@@ -1,0 +1,16 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: es-backup-pv
+  labels:
+    role: es-backup
+    access: multi
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteMany
+  nfs:
+    server: es-backup-nfs-server
+    path: "/exports"

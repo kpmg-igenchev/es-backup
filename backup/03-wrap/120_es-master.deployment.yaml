@@ -1,0 +1,70 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: es-logging-master
+  namespace: efk
+  labels:
+    component: elasticsearch
+    role: master
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        component: elasticsearch
+        role: master
+    spec:
+      containers:
+      - name: es-logging-master
+        image: es:6.6.2
+        env:
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: CLUSTER_NAME
+          value: myesdb
+        - name: NUMBER_OF_MASTERS
+          value: "2"
+        - name: NODE_MASTER
+          value: "true"
+        - name: NODE_INGEST
+          value: "false"
+        - name: NODE_DATA
+          value: "false"
+        - name: HTTP_ENABLE
+          value: "false"
+        - name: ES_JAVA_OPTS
+          value: -Xms256m -Xmx256m
+        ports:
+        - containerPort: 9300
+          name: transport
+        livenessProbe:
+          tcpSocket:
+            port: transport
+        volumeMounts:
+        - name: storage
+          mountPath: /usr/share/elasticsearch/data
+        - name: logs
+          mountPath: /usr/share/elasticsearch/logs
+        - name: config
+          mountPath: /usr/share/elasticsearch/config
+        - name: backup
+          mountPath: /usr/share/elasticsearch/bakup
+      volumes:
+          - emptyDir:
+              medium: ""
+            name: "storage"
+          - emtpyDir:
+              medium: ""
+            name: "logs"
+          - configMap:
+              name: es-config
+            name: "config"
+          - persistentVolumeClaim:
+              claimName: es-backup-claim
+            name: backup

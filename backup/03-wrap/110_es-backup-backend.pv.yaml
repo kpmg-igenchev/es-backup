@@ -1,0 +1,19 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: es-backup-backend-pv
+  labels:
+    role: es-backup-backend
+    access: exclusive
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  iscsi:
+    targetPortal: 10.0.0.9
+    iqn: iqn.2019-02.k8s.storage:storage.target00
+    lun: 0
+    fsType: 'ext4'
+    readOnly: false

@@ -1,0 +1,36 @@
+apiVersion: apps/v1beta2
+kind: StatefulSet
+metadata:
+  name: es-elasticsearch-nfs-backup-server
+  labels:
+    app.kubernetes.io/name: "esbackup"
+    app.kubernetes.io/component: elasticsearch-backup-server
+spec:
+  serviceName: es-backup-nfs-server
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: "esbackup"
+        app.kubernetes.io/component: elasticsearch-backup-server
+    spec:
+      securityContext:
+        fsGroup: 65533
+      containers:
+      - name: nfs-server
+        image: launcher.gcr.io/google/nfs-server1:1.3
+        imagePullPolicy: Always
+        ports:
+        - name: nfs
+          containerPort: 2049
+        - name: mountd
+          containerPort: 20048
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - mountPath: /exports
+          name: es-backup-backend
+      volumes:
+        - name: es-backup-backend
+          persistentVolumeClaim:
+            claimName: es-backup-nfs-server
