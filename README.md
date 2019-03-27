@@ -9,7 +9,7 @@ ElasticSearch Docker image adapted from https://github.com/pires/kubernetes-elas
 1. `./image/`
   Contains a Dockerfile and Makefile for creating a custom ElasticSearch image
 1. `./basic/`
-  Contains the popular example of deployin ElasticSearch, with no backup mentioned
+  Contains the popular example of deploying ElasticSearch, with no backup mentioned
 1. `./backup/01-plugin/`
   Contains code to configure ElasticSearch backup using a cloud storage plugin / no Kubernetes
 1. `./backup/02-k8s/`
